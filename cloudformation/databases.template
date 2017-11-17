@@ -8,7 +8,7 @@ Parameters:
     AllowedValues:
       - infratest
       - helsinki-qa
-      - helsinki
+      - hri
   DatabaseSubnets:
     Description: Database and EFS mount target subnets
     Type: List<AWS::EC2::Subnet::Id>
