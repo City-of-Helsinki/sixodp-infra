@@ -32,6 +32,19 @@ Parameters:
     Type: String
     NoEcho: true
     MinLength: 8
+  SnapshotIdentifierCKAN:
+    Description: Optional CKAN snapshot to restore
+    Type: String
+    Default: ""
+  SnapshotIdentifierWP:
+    Description: Optional WP snapshot to restore
+    Type: String
+    Default: ""
+
+Conditions:
+    UseDBSnapshotCKAN: !Not [!Equals [!Ref SnapshotIdentifierCKAN,  ""]]
+    UseDBSnapshotWP: !Not [!Equals [!Ref SnapshotIdentifierWP,  ""]]
+
 Resources:
   RDSInstance:
     Type: AWS::RDS::DBInstance
@@ -43,6 +56,7 @@ Resources:
       MultiAZ: false
       StorageType: gp2
       DBInstanceIdentifier: !Sub sixodp-${EnvironmentName}-ckan
+      DBSnapshotIdentifier: !If [ UseDBSnapshotCKAN, !Ref SnapshotIdentifierCKAN, !Ref "AWS::NoValue" ]
       MasterUsername: !Ref CKANAdminUsername
       MasterUserPassword: !Ref CKANAdminPassword
       DBSubnetGroupName: !Ref DatabaseSubnetGroup
@@ -59,6 +73,7 @@ Resources:
       MultiAZ: false
       StorageType: gp2
       DBInstanceIdentifier: !Sub sixodp-${EnvironmentName}-wordpress
+      DBSnapshotIdentifier: !If [ UseDBSnapshotWP, !Ref SnapshotIdentifierWP, !Ref "AWS::NoValue" ]
       MasterUsername: !Ref WPAdminUsername
       MasterUserPassword: !Ref WPAdminPassword
       DBSubnetGroupName: !Ref DatabaseSubnetGroup
