@@ -17,7 +17,8 @@ Parameters:
       - t2.micro
       - t2.small
       - t2.medium
-    ConstraintDescription: "Must be one of the following EC2 instance types: t2.micro, t2.small, t2.medium"
+      - t2.large
+    ConstraintDescription: "Must be one of the following EC2 instance types: t2.micro, t2.small, t2.medium, t2.large"
   DatabaseSecurityGroup:
     Description: Security group of the RDS database
     Type: AWS::EC2::SecurityGroup::Id
@@ -39,6 +40,15 @@ Parameters:
     Type: String
     Default: master
     MinLength: 1
+  HostedZoneId:
+    Description: Zone ID for the DNS record
+    Type: AWS::Route53::HostedZone::Id
+    Default: ZATUHVQ7UQKB7
+    MinLength: 1
+
+Conditions:
+    IsProduction:
+        !Equals [!Ref EnvironmentName, hri]
 
 Resources:
   EC2Instance:
@@ -153,6 +163,26 @@ Resources:
     Type: AWS::EC2::EIP
     Properties:
       InstanceId: !Ref EC2Instance
+
+  DomainName:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: hri.fi
+      Type: A
+      TTL: 300
+      HostedZoneId: !Ref HostedZoneId
+      ResourceRecords: [ { "Fn::GetAtt" : [ "EC2Instance", "PublicIp" ] } ]
+    Condition: IsProduction
+
+  WWWDomainName:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: www.hri.fi
+      Type: A
+      TTL: 300
+      HostedZoneId: !Ref HostedZoneId
+      ResourceRecords: [ { "Fn::GetAtt" : [ "EC2Instance", "PublicIp" ] } ]
+    Condition: IsProduction
 
   InstanceRole:
     Type: AWS::IAM::Role
