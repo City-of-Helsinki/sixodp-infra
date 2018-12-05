@@ -223,11 +223,12 @@ Resources:
   PgAdminDomainName:
     Type: AWS::Route53::RecordSet
     Properties:
-      Name: !Sub phppgadmin.${EnvironmentName}.hri.fi
+      Name: !Sub phppgadmin.hri.fi
       Type: A
       TTL: 300
       HostedZoneId: !Ref HostedZoneId
       ResourceRecords: [ { "Fn::GetAtt" : [ "EC2Instance", "PublicIp" ] } ]
+    Condition: IsProduction
 
   InstanceRole:
     Type: AWS::IAM::Role
