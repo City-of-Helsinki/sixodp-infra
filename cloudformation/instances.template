@@ -45,6 +45,9 @@ Parameters:
     Type: AWS::Route53::HostedZone::Id
     Default: ZATUHVQ7UQKB7
     MinLength: 1
+  AlternativeHostedZoneId:
+    Description: Alternative Zone ID for the DNS record
+    Type: AWS::Route53::HostedZone::Id
   ClientIp1ForPgAdmin:
     Description: Optional ip range of client
     Type: String
@@ -219,6 +222,26 @@ Resources:
       Type: A
       TTL: 300
       HostedZoneId: !Ref HostedZoneId
+      ResourceRecords: [ !Ref ElasticAddress ]
+    Condition: IsProduction
+
+  AlternativeDomainName:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: helsinkiregioninfoshare.fi
+      Type: A
+      TTL: 300
+      HostedZoneId: !Ref AlternativeHostedZoneId
+      ResourceRecords: [ !Ref ElasticAddress ]
+    Condition: IsProduction
+
+  AlternativeWWWDomainName:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: www.helsinkiregioninfoshare.fi
+      Type: A
+      TTL: 300
+      HostedZoneId: !Ref AlternativeHostedZoneId
       ResourceRecords: [ !Ref ElasticAddress ]
     Condition: IsProduction
 
