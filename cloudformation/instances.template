@@ -205,26 +205,6 @@ Resources:
     Properties:
       InstanceId: !Ref EC2Instance
 
-  DomainName:
-    Type: AWS::Route53::RecordSet
-    Properties:
-      Name: hri.fi
-      Type: A
-      TTL: 300
-      HostedZoneId: !Ref HostedZoneId
-      ResourceRecords: [ !Ref ElasticAddress ]
-    Condition: IsProduction
-
-  WWWDomainName:
-    Type: AWS::Route53::RecordSet
-    Properties:
-      Name: www.hri.fi
-      Type: A
-      TTL: 300
-      HostedZoneId: !Ref HostedZoneId
-      ResourceRecords: [ !Ref ElasticAddress ]
-    Condition: IsProduction
-
   AlternativeDomainName:
     Type: AWS::Route53::RecordSet
     Properties:
